@@ -48,6 +48,10 @@ export async function onRequestPost({ request, env }) {
       name: normalize(body.name, 120),
       contact: normalize(body.contact, 200),
       message: normalize(body.message, 3000),
+      requirement: normalize(body.requirement, 3000),
+      consent: normalize(body.consent, 20),
+      landingMarket: normalize(body.landingMarket, 80),
+      source: normalize(body.source, 160),
       page: normalize(body.page, 500),
       pageTitle: normalize(body.pageTitle, 300),
       timezone: normalize(body.timezone, 100),
@@ -63,6 +67,10 @@ export async function onRequestPost({ request, env }) {
 
     if (inquiry.message.length < 10) {
       return jsonResponse({ ok: false, error: 'Product requirement is too short.' }, 400);
+    }
+
+    if (inquiry.consent !== 'yes') {
+      return jsonResponse({ ok: false, error: 'Consent is required before submitting the inquiry.' }, 400);
     }
 
     const upstream = await fetch(env.GOOGLE_SCRIPT_URL, {
